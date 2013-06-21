@@ -1,0 +1,10 @@
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\bin\Debug\leap_sample0.exe.config
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\bin\Debug\leap_sample0.exe
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\bin\Debug\leap_sample0.pdb
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.csprojResolveAssemblyReference.cache
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.Properties.Resources.resources
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.csproj.GenerateResource.Cache
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.exe
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.pdb
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\bin\Debug\LeapCSharp.NET4.0.dll
+c:\users\brejla\documents\visual studio 2012\Projects\leap_sample0\leap_sample0\obj\Debug\leap_sample0.Form1.resources

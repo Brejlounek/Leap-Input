@@ -43,38 +43,14 @@ namespace leap_sample0
             }
             else
             {
-                // Create a sample listener and controller
+                // Create listener and controller
                 listener = new SampleListener();
                 listener.form = this;
                 controller = new Controller();
 
-                //try to connect 100 times
-                int t = 0;
-                fps_label.Text = "connecting...";
-                fps_label.Refresh();
-                while (!controller.IsConnected && t<100)
-                {
-                    t++;
-                    Thread.Sleep(1);
-                    if (controller.IsConnected)
-                    {
-                        controller.AddListener(listener);
-                        connectbutton.Text = "Disconnect";
-                        connected = true;
-                    }
-                }
-                if (!controller.IsConnected)
-                {
-                    fps_label.Text = "disconnected";
-                    controller.RemoveListener(listener);
-                    controller.Dispose();
-                }
-                else
-                {
-                    controller.AddListener(listener);
-                    connectbutton.Text = "Disconnect";
-                    connected = true;
-                }
+                controller.AddListener(listener);
+                connectbutton.Text = "Disconnect";
+                connected = true;
             }
         }
 
@@ -85,7 +61,8 @@ namespace leap_sample0
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //controller.Dispose();
+            controller.RemoveListener(listener);
+            controller.Dispose();
         }
 
         private void sensitivity_track_Scroll(object sender, EventArgs e)

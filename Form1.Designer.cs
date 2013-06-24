@@ -46,7 +46,6 @@
             this.ad = new System.Windows.Forms.Label();
             this.wasd_check = new System.Windows.Forms.CheckBox();
             this.debug_label = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.sensitivity_track)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.yoffset_track)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ws_track)).BeginInit();
@@ -236,19 +235,11 @@
             this.debug_label.TabIndex = 17;
             this.debug_label.Text = "debug";
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(114, 145);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 20);
-            this.textBox1.TabIndex = 18;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(483, 201);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.debug_label);
             this.Controls.Add(this.wasd_check);
             this.Controls.Add(this.ad);
@@ -300,7 +291,6 @@
         private System.Windows.Forms.Label ad;
         public System.Windows.Forms.CheckBox wasd_check;
         public System.Windows.Forms.Label debug_label;
-        private System.Windows.Forms.TextBox textBox1;
 
     }
 }

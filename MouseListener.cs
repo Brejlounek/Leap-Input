@@ -60,6 +60,7 @@ namespace leap_sample0
           [MarshalAs(UnmanagedType.LPArray, SizeConst = 1)] INPUT[] pInputs,
           Int32 cbSize);
 
+        //press key
         public static void Stroke(ushort ScanCode)
         {
             INPUT[] InputData = new INPUT[1];
@@ -69,6 +70,7 @@ namespace leap_sample0
             SendInput(1, InputData, Marshal.SizeOf(InputData[0]));
         }
 
+        //release key
         public static void Release(ushort ScanCode)
         {
             INPUT[] InputData = new INPUT[1];
@@ -91,23 +93,7 @@ namespace leap_sample0
             SafeWriteLine("Initialized");
             stopWatch = new Stopwatch();
             stopWatch.Start();
-            screens = controller.CalibratedScreens;
             controller.SetPolicyFlags(Controller.PolicyFlag.POLICYBACKGROUNDFRAMES);
-        }
-
-        public override void OnConnect(Controller controller)
-        {
-            SafeWriteLine("Connected");
-        }
-
-        public override void OnDisconnect(Controller controller)
-        {
-            SafeWriteLine("Disconnected");
-        }
-
-        public override void OnExit(Controller controller)
-        {
-            SafeWriteLine("Exited");
         }
 
         //changing label thread-safe
@@ -123,6 +109,10 @@ namespace leap_sample0
 
         public override void OnFrame(Controller controller)
         {
+            //get screens
+            screens = controller.CalibratedScreens;
+
+            //calculate fps
             double fps = 1.0 * Stopwatch.Frequency / (stopWatch.ElapsedTicks - lasttime);
             lasttime = stopWatch.ElapsedTicks;
 
@@ -134,6 +124,21 @@ namespace leap_sample0
                 timeaccum -= 0.5;
                 framesaccum = 0;
             }
+
+            bool wasd = false;
+            float scale, yoffset,ws,ad;
+            bool intersect;
+            lock (thisLock) //get access to input data
+            {
+                scale = (float)form.sens;
+                yoffset = (float)form.yoffset;
+                ws = (float)form.wsval;
+                ad = (float)form.adval;
+                intersect = form.intersect;
+                wasd = form.wasd_check.Checked;
+            }
+
+            //move phase for keyboard simulation
             phase += par / fps * freq;
             if (phase > 1)
             {
@@ -145,30 +150,28 @@ namespace leap_sample0
                 par = 1;
                 phase = 0;
             }
-            //Console.WriteLine(phase);
 
             Pointable point1 = null;
             bool point1_ok = false;
 
-
-            // Get the most recent frame and report some basic information
+            // Get the most recent frame
             Frame frame = controller.Frame();
 
             if (!frame.Tools.Empty)
             {
                 //get the nearest tool
-                int nejbliz = 0;
-                double nejblizval = double.MaxValue;
+                int nearest = 0;
+                double nearestval = double.MaxValue;
                 ToolList tools = frame.Tools;
                 for (int i = 0; i < tools.Count(); i++)
                 {
-                    if (tools[i].TipPosition.z < nejblizval)
+                    if (tools[i].TipPosition.z < nearestval)
                     {
-                        nejbliz = i;
-                        nejblizval = tools[i].TipPosition.z;
+                        nearest = i;
+                        nearestval = tools[i].TipPosition.z;
                     }
                 }
-                point1 = tools[nejbliz];
+                point1 = tools[nearest];
                 point1_ok = true;
             }
             else if (!frame.Hands.Empty)
@@ -182,59 +185,48 @@ namespace leap_sample0
                 {
 
                     //get the finger closest to the screen (smallest z)
-                    int nejbliz = 0;
-                    double nejblizval = double.MaxValue;
+                    int nearest = 0;
+                    double nearestval = double.MaxValue;
                     for (int i = 0; i < fingers.Count(); i++)
                     {
-                        if (fingers[i].TipPosition.z < nejblizval)
+                        if (fingers[i].TipPosition.z < nearestval)
                         {
-                            nejbliz = i;
-                            nejblizval = fingers[i].TipPosition.z;
+                            nearest = i;
+                            nearestval = fingers[i].TipPosition.z;
                         }
                     }
-                    point1 = fingers[nejbliz];
+                    point1 = fingers[nearest];
                     point1_ok = true;
 
                 }
 
             }
 
-            bool wasd=false;
-            float ws=0, ad=0;
             if (point1_ok) //there is finger or tool
             {
                 PointConverter pc = new PointConverter();
                 Point pt = new Point();
-                float scale, yoffset;
-                bool intersect;
-                lock (thisLock) //get access to input data
-                {
-                    scale = (float)form.sens;
-                    yoffset = (float)form.yoffset;
-                    ws = (float)form.wsval;
-                    ad = (float)form.adval;
-                    intersect = form.intersect;
-                    wasd = form.wasd_check.Checked;
-                }
 
-                //interset/project on screen
-                Vector intersection;
-                if (intersect)
-                    intersection = screens[0].Intersect(point1, true, 4.0f / scale);
-                else
-                    intersection = screens[0].Project(point1.TipPosition, true, 4.0f / scale);
-
-                //scale and offset screen position
-                double scx = (intersection.x - 0.5) * scale + 0.5;
-                double scy = (1 - intersection.y - 0.5) * scale + 0.5 + yoffset;
-                pt.X = (int)(scx * screens[0].WidthPixels);
-                pt.Y = (int)(scy * screens[0].HeightPixels);
-
+                //wasd not checked
                 if (!wasd)
-                    Cursor.Position = pt;
+                {
+                    //interset/project on screen
+                    Vector intersection;
+                    if (intersect)
+                        intersection = screens[0].Intersect(point1, true, 4.0f / scale);
+                    else
+                        intersection = screens[0].Project(point1.TipPosition, true, 4.0f / scale);
 
+                    //scale and offset screen position
+                    double scx = (intersection.x - 0.5) * scale + 0.5;
+                    double scy = (1 - intersection.y - 0.5) * scale + 0.5 + yoffset;
+                    pt.X = (int)(scx * screens[0].WidthPixels);
+                    pt.Y = (int)(scy * screens[0].HeightPixels);
+
+                    Cursor.Position = pt;
+                }
                 //if wasd is checked
-                if (wasd)
+                else
                 {
                     string str = "";
 
@@ -249,19 +241,7 @@ namespace leap_sample0
                     double zph = (Math.Abs(hand.PalmPosition.z-100) - ws * 200.0) / (200.0 * ws); //acceleration using z
 
                     //stroke or release given keys
-                    if (xph < 0 && Math.Abs(xph) > phase)
-                    {
-                        str += "A";
-                        if (!pA || Math.Abs(xph) > 1)
-                            Stroke(0x1E);
-                        pA = true;
-                    }
-                    else
-                    {
-                        if (pA)
-                            Release(0x1E);
-                        pA = false;
-                    }
+                    
                     if (xph > 0 && Math.Abs(xph) > phase)
                     {
                         str += "D";

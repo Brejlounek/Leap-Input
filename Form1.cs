@@ -48,9 +48,12 @@ namespace leap_sample0
                 listener.form = this;
                 controller = new Controller();
 
-                controller.AddListener(listener);
-                connectbutton.Text = "Disconnect";
-                connected = true;
+                if (controller.IsConnected)
+                {
+                    controller.AddListener(listener);
+                    connectbutton.Text = "Disconnect";
+                    connected = true;
+                }
             }
         }
 
@@ -61,8 +64,11 @@ namespace leap_sample0
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            controller.RemoveListener(listener);
-            controller.Dispose();
+            if (connected)
+            {
+                controller.RemoveListener(listener);
+                controller.Dispose();
+            }
         }
 
         private void sensitivity_track_Scroll(object sender, EventArgs e)

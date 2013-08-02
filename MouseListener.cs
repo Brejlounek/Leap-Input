@@ -25,6 +25,7 @@ namespace leap_sample0
 
         private double lx = double.MinValue,
                         ly = double.MinValue;
+
         bool pW = false, pA = false, pS = false, pD = false;
         double phase = 0,freq=30;
         int par = 1;
@@ -254,6 +255,19 @@ namespace leap_sample0
                         if (pD)
                             Release(0x20);
                         pD = false;
+                    }
+                    if (xph < 0 && Math.Abs(xph) > phase)
+                    {
+                        str += "A";
+                        if (!pA || Math.Abs(xph) > 1)
+                            Stroke(0x1E);
+                        pA = true;
+                    }
+                    else
+                    {
+                        if (pA)
+                            Release(0x1E);
+                        pA = false;
                     }
 
                     if (z > 0 && zph > phase)
